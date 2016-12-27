@@ -1,0 +1,46 @@
+<html>
+<head>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-animate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-aria.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/0.8.2/angular-material.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/0.9.7/angular-material.min.css"></link>
+</head>
+<body ng-app="themeApp">
+	<div ng-controller="themeController" md-theme="{{theme}}">
+    <div>Current theme: {{theme}}.</div>
+    <div>
+		<md-button class="md-primary md-raised" ng-click=nextTheme()>Next theme</md-button>
+		<md-button class="md-raised md-accent">md-accent</md-button>
+		<md-button class="md-raised md-warn">md-warn</md-button>
+    </div>
+	</div>
+</body>
+<script>
+'use strict';
+// color themes wihtout orange and red
+var colors = ["pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "deep-orange", "brown", "grey", "blue-grey"];
+
+(function(){
+var app = angular.module('themeApp', ['ngMaterial'])
+	.config(function($mdThemingProvider) {
+	// register All The Themes
+	for(var i in colors){
+		$mdThemingProvider.theme(colors[i])
+		  .primaryPalette(colors[i])
+		  .accentPalette('orange')
+		  .warnPalette('red')
+	}
+	// Important
+	$mdThemingProvider.alwaysWatchTheme(true);
+})
+	.controller('themeController', function($scope){
+		$scope.theme = colors[0]
+		$scope.i = 0
+		$scope.nextTheme = function() {
+			$scope.theme = colors[++$scope.i % (colors.length-1)]
+		};
+	});
+})()
+</script>
+</html>
