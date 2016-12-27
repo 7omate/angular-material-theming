@@ -3,12 +3,30 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-animate.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-aria.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/0.8.2/angular-material.min.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/0.9.7/angular-material.min.css"></link>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.0/angular-material.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.0/angular-material.min.css"></link>
 </head>
-<body ng-app="themeApp">
+<body ng-app="themeApp" ng-cloak>
 	<div ng-controller="themeController" md-theme="{{theme}}">
-    <div>Current theme: {{theme}}.</div>
+	<md-content layout="row">
+	 <md-input-container>
+        <label>Palette</label>
+        <md-select ng-model="selectedPalette" ng-init="blue" md-on-close="theme = selectedPalette+'-'+selectedVariant">
+          <md-optgroup label="palettes">
+            <md-option ng-value="item" ng-repeat="item in colors">{{item}}</md-option>
+          </md-optgroup>
+        </md-select>
+      </md-input-container>
+	 <md-input-container>
+		 <label>Variants</label>
+		 <md-select ng-model="selectedVariant" ng-init="500" md-on-close="theme = selectedPalette+'-'+selectedVariant">
+          <md-optgroup label="variants">
+            <md-option ng-value="item" ng-repeat="item in variants">{{item}}</md-option>
+          </md-optgroup>
+        </md-select>
+      </md-input-container>
+	</md-content>
+	<div>Current theme: {{theme}}.</div>
     <div>
 		<md-button class="md-primary md-raised" ng-click=nextTheme()>Next theme</md-button>
 		<md-button class="md-raised md-accent">md-accent</md-button>
@@ -19,27 +37,35 @@
 <script>
 'use strict';
 // color themes wihtout orange and red
-var colors = ["pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "deep-orange", "brown", "grey", "blue-grey"];
+var colors = ["pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "deep-orange", "brown", "grey", "blue-grey"]
+var variants = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"]
 
-(function(){
+;(function(){
 var app = angular.module('themeApp', ['ngMaterial'])
 	.config(function($mdThemingProvider) {
 	// register All The Themes
 	for(var i in colors){
-		$mdThemingProvider.theme(colors[i])
-		  .primaryPalette(colors[i])
-		  .accentPalette('orange')
-		  .warnPalette('red')
+		for(var j in variants){
+			$mdThemingProvider.theme(colors[i] + "-" + variants[j])
+				.primaryPalette(colors[i], {'default': variants[j]})
+			  .accentPalette('orange')
+			  .warnPalette('red')
+			//console.log("Generated " + colors[i]+"-"+variants[j])
+		}
 	}
 	// Important
 	$mdThemingProvider.alwaysWatchTheme(true);
 })
 	.controller('themeController', function($scope){
-		$scope.theme = colors[0]
+		$scope.colors = colors
+		$scope.variants = variants
+		$scope.theme = colors[0]+"-"+variants[0]
 		$scope.i = 0
+
 		$scope.nextTheme = function() {
-			$scope.theme = colors[++$scope.i % (colors.length-1)]
-		};
+			$scope.theme = colors[++$scope.i % (colors.length-1)]+"-"+variants[5]
+		}
+
 	});
 })()
 </script>
